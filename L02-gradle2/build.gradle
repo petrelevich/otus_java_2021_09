@@ -1,5 +1,4 @@
 plugins {
-    // Apply the java plugin to add support for Java
     id 'java'
     id 'com.github.johnrengelman.shadow'
 }
@@ -8,8 +7,11 @@ sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
 dependencies {
-    // This dependency is used by the application.
     implementation 'com.google.guava:guava'
+    implementation 'com.zaxxer:HikariCP'
+
+    implementation("org.springframework.data:spring-data-hadoop:2.0.0.RELEASE")
+    implementation("org.springframework:spring-tx:3.2.3.RELEASE")
 }
 
 shadowJar {
