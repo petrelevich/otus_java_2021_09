@@ -1,0 +1,31 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow'
+}
+
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
+dependencies {
+    implementation 'org.openjdk.jol:jol-core'
+}
+
+shadowJar {
+    archiveBaseName.set('remoteDebugDemo')
+    archiveVersion.set('0.1')
+    archiveClassifier.set('')
+    manifest {
+        attributes 'Main-Class': 'ru.otus.RemoteDebug'
+    }
+}
+
+task shadowJolExample(type: Jar, dependsOn: shadowJar) {
+    archiveBaseName.set('jolExample')
+    manifest {
+        attributes 'Main-Class': 'ru.otus.jol.JolExample'
+    }
+    from zipTree(shadowJar.archiveFile)
+}
+
+tasks.build.dependsOn tasks.shadowJar
+tasks.build.dependsOn tasks.shadowJolExample

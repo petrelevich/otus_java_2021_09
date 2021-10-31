@@ -1,0 +1,5 @@
+java -Djdk.attach.allowAttachSelf -Djol.tryWithSudo=true \
+-verbose:gc -Xms128m -Xmx128m \
+-XX:MaxTenuringThreshold=2 \
+-XX:+UseBiasedLocking \
+-jar ./build/libs/jolExample.jar
