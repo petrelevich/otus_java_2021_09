@@ -15,7 +15,7 @@ public class RecordLayoutExample {
 
     public void demo() {
 
-        // System.out.println(ClassLayout.parseClass(TestBr.class).toPrintable());
+         System.out.println(ClassLayout.parseClass(TestBr.class).toPrintable());
         // System.out.println(ClassLayout.parseInstance(new TestBr(false)).toPrintable());
 
         Xy xy = new Xy(3, 2);
@@ -27,6 +27,10 @@ public class RecordLayoutExample {
         System.out.println("sumClass:" + sumClass);
 
     }
+
+    public record TestBr(boolean b) {
+    }
+
 
     public record Xy(int x, int y) {
         public int sum() {
