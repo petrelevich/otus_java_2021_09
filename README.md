@@ -1,6 +1,4 @@
-# Примеры для курса OTUS ["Разработчик Java"](https://otus.ru/lessons/java-professional/?utm_source=github&utm_medium=free&utm_campaign=otus)
-
-
+# Курс OTUS ["Разработчик Java"](https://otus.ru/lessons/java-professional/?utm_source=github&utm_medium=free&utm_campaign=otus)
 Группа 2021-09
 
 ### Преподаватели
