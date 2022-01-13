@@ -144,7 +144,7 @@ public class ReferenceDemo {
     private static void phantomDemo() throws InterruptedException {
         var a = new BigObject();
         ReferenceQueue<BigObject> refQueue = new ReferenceQueue<>();
-        new PhantomReference<>(a, refQueue);
+        var phantomReference = new PhantomReference<>(a, refQueue);
 
         new Thread(
                 () -> {
