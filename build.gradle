@@ -1,9 +1,9 @@
 plugins {
     //support Idea IDE
-    id 'idea'
-    id "io.spring.dependency-management" version "1.0.10.RELEASE"
+    id "idea"
+    id "io.spring.dependency-management" version "1.0.11.RELEASE"
     // Build uber-jar
-    id 'com.github.johnrengelman.shadow' version '6.1.0' apply false
+    id "com.github.johnrengelman.shadow" version "7.1.2" apply false
 }
 
 idea {
@@ -28,7 +28,7 @@ allprojects {
     dependencyManagement {
         dependencies {
             imports {
-                mavenBom("org.springframework.boot:spring-boot-dependencies:2.5.2")
+                mavenBom("org.springframework.boot:spring-boot-dependencies:2.6.3")
             }
             dependency("com.google.guava:guava:${Versions.guava}")
             dependency("org.openjdk.jmh:jmh-core:${Versions.jmh}")
@@ -53,6 +53,11 @@ allprojects {
             dependency("org.neo4j.driver:neo4j-java-driver:${Versions.neo4j}")
 
             dependency("redis.clients:jedis:${Versions.jedis}")
+
+            dependency("org.webjars:sockjs-client:${Versions.sockjs}")
+            dependency("org.webjars:stomp-websocket:${Versions.stomp}")
+            dependency("org.webjars:bootstrap:${Versions.bootstrap}")
+            dependency("org.springdoc:springdoc-openapi-ui:${Versions.springDocOpenapiUi}")
         }
     }
 
