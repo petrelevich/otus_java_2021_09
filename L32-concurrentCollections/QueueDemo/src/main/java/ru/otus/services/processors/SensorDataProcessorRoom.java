@@ -6,8 +6,7 @@ import ru.otus.api.SensorDataProcessor;
 import ru.otus.api.model.SensorData;
 
 public class SensorDataProcessorRoom implements SensorDataProcessor {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SensorDataProcessorRoom.class);
+    private static final Logger log = LoggerFactory.getLogger(SensorDataProcessorRoom.class);
 
     private final String roomName;
 
@@ -17,9 +16,9 @@ public class SensorDataProcessorRoom implements SensorDataProcessor {
 
     @Override
     public void process(SensorData data) {
-        if (data == null || data.getValue() == null || data.getValue().isNaN()) {
+        if (data.getValue() == null || data.getValue().isNaN()) {
             return;
         }
-        LOG.info("Обработка данных по заданной комнате ({}): {}", roomName, data);
+        log.info("Обработка данных по заданной комнате ({}): {}", roomName, data);
     }
 }

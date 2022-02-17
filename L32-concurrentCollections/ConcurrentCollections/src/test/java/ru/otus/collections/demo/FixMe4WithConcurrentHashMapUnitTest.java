@@ -1,6 +1,8 @@
 package ru.otus.collections.demo;
 
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,16 +19,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 // - Какую коллекцию будем менять и на какую?
 // - Фиксим тест сейчас!
 // - *Для какого сценария по нагрузке больше всего подходит ConcurrentHashMap?
-public class FixMe4WithConcurrentHashMapUnitTest {
+class FixMe4WithConcurrentHashMapUnitTest {
+    private static final Logger log = LoggerFactory.getLogger(FixMe4WithConcurrentHashMapUnitTest.class);
 
     private static final int ITERATIONS_COUNT = 1000;
 
     @Test
-    public void testConcurrentHashMapWorksGreat() throws InterruptedException {
+    void testConcurrentHashMapWorksGreat() throws InterruptedException {
 
         final Map<String, String> map = new HashMap<>();
         final CountDownLatch latch = new CountDownLatch(1);
-        List<Throwable> throwables = new ArrayList<>();
+        List<Exception> exceptions = new ArrayList<>();
 
         Thread t1 = new Thread(() -> {
             try {
@@ -37,8 +40,8 @@ public class FixMe4WithConcurrentHashMapUnitTest {
                     map.put(s, s);
                     out.println("finishing adding email " + i);
                 }
-            } catch (Throwable throwable) {
-                throwables.add(throwable);
+            } catch (Exception ex) {
+                log.error(ex.getMessage(), ex);
             }
         });
         Thread t2 = new Thread(() -> {
@@ -49,8 +52,8 @@ public class FixMe4WithConcurrentHashMapUnitTest {
                     map.forEach((k, v) -> out.println(k));
                     out.println("finishing read iteration " + i);
                 }
-            } catch (Throwable throwable) {
-                throwables.add(throwable);
+            } catch (Exception ex) {
+                exceptions.add(ex);
             }
         });
 
@@ -62,7 +65,7 @@ public class FixMe4WithConcurrentHashMapUnitTest {
         t1.join();
         t2.join();
 
-        assertThat(throwables).withFailMessage(throwables.toString()).isEmpty();
+        assertThat(exceptions).withFailMessage(exceptions.toString()).isEmpty();
 
     }
 }

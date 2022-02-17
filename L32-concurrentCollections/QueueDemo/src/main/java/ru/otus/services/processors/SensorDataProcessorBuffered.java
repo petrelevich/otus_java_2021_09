@@ -6,15 +6,9 @@ import ru.otus.lib.SensorDataBufferedWriter;
 import ru.otus.api.SensorDataProcessor;
 import ru.otus.api.model.SensorData;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.PriorityBlockingQueue;
-import java.util.concurrent.locks.ReentrantLock;
 // Этот класс нужно реализовать
 public class SensorDataProcessorBuffered implements SensorDataProcessor {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SensorDataProcessorBuffered.class);
+    private static final Logger log = LoggerFactory.getLogger(SensorDataProcessorBuffered.class);
 
     private final int bufferSize;
     private final SensorDataBufferedWriter writer;
@@ -37,7 +31,7 @@ public class SensorDataProcessorBuffered implements SensorDataProcessor {
         try {
             //writer.writeBufferedData(bufferedData);
         } catch (Exception e) {
-            LOG.error("Ошибка в процессе записи буфера", e);
+            log.error("Ошибка в процессе записи буфера", e);
         }
     }
 

@@ -2,6 +2,8 @@ package ru.otus.collections.demo;
 
 
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,16 +18,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 // - Какую коллекцию будем менять и на какую?
 // - Фиксим тест сейчас!
 // - *Для какого сценария по нагрузке больше всего подходит CopyOnWriteArrayList?
-public class FixMe3WithCopyOnWriteArrayListUnitTest {
+class FixMe3WithCopyOnWriteArrayListUnitTest {
+    private static final Logger log = LoggerFactory.getLogger(FixMe3WithCopyOnWriteArrayListUnitTest.class);
 
     private static final int ITERATIONS_COUNT = 1000;
 
     @Test
-    public void testCopyOnWriteArrayListWorksGreat() throws InterruptedException {
+    void testCopyOnWriteArrayListWorksGreat() throws InterruptedException {
 
         final List<String> list = new ArrayList<>();
         final CountDownLatch latch = new CountDownLatch(1);
-        List<Throwable> throwables = new ArrayList<>();
+        List<Exception> exceptions = new ArrayList<>();
 
         Thread t1 = new Thread(() -> {
             try {
@@ -35,8 +38,8 @@ public class FixMe3WithCopyOnWriteArrayListUnitTest {
                     list.add(randomAlphabetic(10) + "@gmail.com");
                     out.println("finishing adding email " + i);
                 }
-            } catch (Throwable throwable) {
-                throwables.add(throwable);
+            } catch (Exception ex) {
+                log.error(ex.getMessage(), ex);
             }
         });
         Thread t2 = new Thread(() -> {
@@ -49,8 +52,8 @@ public class FixMe3WithCopyOnWriteArrayListUnitTest {
                     }
                     out.println("finishing read iteration " + i);
                 }
-            } catch (Throwable throwable) {
-                throwables.add(throwable);
+            } catch (Exception ex) {
+                exceptions.add(ex);
             }
         });
 
@@ -61,6 +64,6 @@ public class FixMe3WithCopyOnWriteArrayListUnitTest {
 
         t1.join();
         t2.join();
-        assertThat(throwables).withFailMessage(throwables.toString()).isEmpty();
+        assertThat(exceptions).withFailMessage(exceptions.toString()).isEmpty();
     }
 }

@@ -10,22 +10,19 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 public class SensorsDataQueueChannel implements SensorsDataChannel {
-
-    public static final int SENSORS_DATA_QUEUE_CAPACITY = 1000;
-
-    private static final Logger LOG = LoggerFactory.getLogger(SensorsDataQueueChannel.class);
+    private static final Logger log = LoggerFactory.getLogger(SensorsDataQueueChannel.class);
 
     private final BlockingQueue<SensorData> sensorsDataQueue;
 
-    public SensorsDataQueueChannel() {
-        sensorsDataQueue = new ArrayBlockingQueue<>(SENSORS_DATA_QUEUE_CAPACITY);
+    public SensorsDataQueueChannel(int sensorsDataQueueCapacity) {
+        sensorsDataQueue = new ArrayBlockingQueue<>(sensorsDataQueueCapacity);
     }
 
     @Override
     public boolean push(SensorData sensorData) {
         var pushResult = sensorsDataQueue.offer(sensorData);
         if (!pushResult) {
-            LOG.warn("Очередь показаний переполнена");
+            log.warn("Очередь показаний переполнена");
         }
         return pushResult;
     }

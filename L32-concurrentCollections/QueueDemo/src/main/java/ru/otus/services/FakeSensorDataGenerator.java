@@ -10,57 +10,40 @@ import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class FakeSensorDataGenerator {
-    private static final int POOL_SIZE = 3;
+    private static final Logger log = LoggerFactory.getLogger(FakeSensorDataGenerator.class);
 
-    private static final Logger LOG = LoggerFactory.getLogger(FakeSensorDataGenerator.class);
+    private static final int POOL_SIZE = 3;
 
     private final int sensorsCount;
     private final Random random = new Random();
-    private ScheduledExecutorService dataGenerationThreadPool = null;
+    private final ScheduledExecutorService dataGenerationThreadPool = Executors.newScheduledThreadPool(POOL_SIZE);
     private final SensorsDataServer sensorServer;
-    private final AtomicInteger processedCount = new AtomicInteger(0);
 
     public FakeSensorDataGenerator(SensorsDataServer sensorServer, int sensorsCount) {
         this.sensorServer = sensorServer;
         this.sensorsCount = sensorsCount;
-
     }
 
     public void start() {
-        if (dataGenerationThreadPool != null) {
-            throw new IllegalStateException("Поток данных уже запущен!");
-        }
-
-        dataGenerationThreadPool = Executors.newScheduledThreadPool(POOL_SIZE);
         dataGenerationThreadPool.scheduleAtFixedRate(this::generateSensorDataAndSend, 1, 500, TimeUnit.MILLISECONDS);
     }
 
-    public void stop(){
-        if (dataGenerationThreadPool == null) {
-            return;
-        }
+    public void stop() {
         dataGenerationThreadPool.shutdown();
-        dataGenerationThreadPool = null;
     }
 
     private void generateSensorDataAndSend() {
-        sensorServer.onReceive(generate(sensorsCount));
+        sensorServer.onReceive(generate());
     }
 
-    private SensorData generate(int sensorsCount) {
-        processedCount.incrementAndGet();
-        var sensorData = new SensorData("Комната: " + random.nextInt(1, sensorsCount + 1),
-                random.nextDouble());
+    private SensorData generate() {
+        var room = "Комната: " + random.nextInt(1, sensorsCount + 1);
+        var data = isErrorMustOccurs() ? Double.NaN : random.nextDouble();
+        var sensorData = new SensorData(LocalDateTime.now(), room, data);
 
-        if (isErrorMustOccurs()) {
-            sensorData.setValue(Double.NaN);
-        }
-
-        LOG.info("{} Сформированы новые данные датчика: {}", LocalDateTime.now(), sensorData);
-
+        log.info("{} Сформированы новые данные датчика: {}", LocalDateTime.now(), sensorData);
         return sensorData;
     }
 

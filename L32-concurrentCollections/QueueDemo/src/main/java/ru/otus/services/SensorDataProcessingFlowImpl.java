@@ -20,11 +20,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class SensorDataProcessingFlowImpl implements SensorDataProcessingFlow {
-    private static final Logger LOG = LoggerFactory.getLogger(SensorDataProcessingFlowImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(SensorDataProcessingFlowImpl.class);
     public static final int POLLING_TIMEOUT = 5;
     public static final int DATA_PROCESS_THREAD_POOL_SIZE = 1;
 
-    private final Map<String, List<SensorDataProcessor>> bindings;
+    private final Map<String, List<SensorDataProcessor>> bindings = new ConcurrentHashMap<>();
     private final AtomicBoolean pollingInProgress = new AtomicBoolean(false);
     private final ExecutorService pollingThreadPool = Executors.newFixedThreadPool(1);
     private final ExecutorService dataProcessThreadPool = Executors.newFixedThreadPool(DATA_PROCESS_THREAD_POOL_SIZE);
@@ -33,9 +33,7 @@ public class SensorDataProcessingFlowImpl implements SensorDataProcessingFlow {
 
     public SensorDataProcessingFlowImpl(SensorsDataChannel sensorsDataChannel) {
         this.sensorsDataChannel = sensorsDataChannel;
-        bindings = new ConcurrentHashMap<>();
     }
-
 
     @Override
     public void startProcessing() {
@@ -61,11 +59,11 @@ public class SensorDataProcessingFlowImpl implements SensorDataProcessingFlow {
                 var sensorData = sensorsDataChannel.take(POLLING_TIMEOUT, TimeUnit.SECONDS);
 
                 if (sensorData != null) {
-
                     dataProcessThreadPool.submit(() -> processData(sensorData));
                 }
-            } catch (Exception e) {
-                LOG.error("Ошибка в процессе обработки очереди данных", e);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                log.error("Ошибка в процессе обработки очереди данных", e);
             }
         }
         doShutdown();
@@ -76,11 +74,10 @@ public class SensorDataProcessingFlowImpl implements SensorDataProcessingFlow {
             var actualProcessors = new ArrayList<>(bindings.getOrDefault("*", new ArrayList<>()));
             actualProcessors.addAll(bindings.getOrDefault(data.getRoom(), new ArrayList<>()));
             for (var processor : actualProcessors) {
-
                 processor.process(data);
             }
         } catch (Exception e) {
-            LOG.error("Ошибка в процессе обработки показаний датчика", e);
+            log.error("Ошибка в процессе обработки показаний датчика", e);
         }
     }
 
@@ -95,7 +92,7 @@ public class SensorDataProcessingFlowImpl implements SensorDataProcessingFlow {
         try {
             processor.onProcessingEnd();
         } catch (Exception e) {
-            LOG.error("Ошибка в процессе завершающих действий процессора", e);
+            log.error("Ошибка в процессе завершающих действий процессора", e);
         }
     }
 }

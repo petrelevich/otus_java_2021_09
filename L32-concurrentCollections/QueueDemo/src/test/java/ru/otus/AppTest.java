@@ -27,6 +27,7 @@ class AppTest {
     private static final String ALL_ROOMS_BINDING = "*";
     private static final String ROOM_NAME_BINDING = "Комната: 4";
     private static final int SENSORS_COUNT = 4;
+    private static final int SENSORS_DATA_QUEUE_CAPACITY = 1000;
 
     private FakeSensorDataGenerator fakeSensorDataGenerator;
     private SensorsDataQueueChannel sensorsDataChannel;
@@ -36,7 +37,8 @@ class AppTest {
 
     @BeforeEach
     void setUp() {
-        sensorsDataChannel = spy(new SensorsDataQueueChannel());
+
+        sensorsDataChannel = spy(new SensorsDataQueueChannel(SENSORS_DATA_QUEUE_CAPACITY));
         var sensorsDataServer = new SensorsDataServerImpl(sensorsDataChannel);
         sensorDataProcessingFlow = new SensorDataProcessingFlowImpl(sensorsDataChannel);
 

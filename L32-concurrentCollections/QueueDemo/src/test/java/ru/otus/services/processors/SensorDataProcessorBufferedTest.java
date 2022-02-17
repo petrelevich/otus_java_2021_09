@@ -8,6 +8,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.otus.api.model.SensorData;
 import ru.otus.lib.SensorDataBufferedWriter;
 
@@ -26,6 +28,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class SensorDataProcessorBufferedTest {
+    private static final Logger log = LoggerFactory.getLogger(SensorDataProcessorBufferedTest.class);
 
     public static final int BUFFER_SIZE = 2000;
     public static final String ANY_ROOM = "AnyRoom";
@@ -48,7 +51,7 @@ class SensorDataProcessorBufferedTest {
         List<SensorData> sensorDataList = getSensorDataForTest(BUFFER_SIZE + BUFFER_SIZE / 2);
 
         sensorDataList.forEach(sensorData -> processor.process(sensorData));
-        var outOfFirstBufferData = new SensorData(ANY_ROOM, 10500d);
+        var outOfFirstBufferData = new SensorData(LocalDateTime.now(), ANY_ROOM, 10500d);
         processor.process(outOfFirstBufferData);
 
         verify(processor, times(1)).flush();
@@ -130,8 +133,12 @@ class SensorDataProcessorBufferedTest {
 
     private void awaitLatch(CountDownLatch latch) {
         try {
-            latch.await(1, TimeUnit.SECONDS);
+            var result = latch.await(1, TimeUnit.SECONDS);
+            if (result) {
+                log.warn("timeout");
+            }
         } catch (InterruptedException ignored) {
+            Thread.currentThread().interrupt();
         }
     }
 

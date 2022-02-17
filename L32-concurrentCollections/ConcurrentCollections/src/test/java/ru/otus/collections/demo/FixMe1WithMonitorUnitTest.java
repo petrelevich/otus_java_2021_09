@@ -2,6 +2,8 @@ package ru.otus.collections.demo;
 
 
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,16 +27,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 // - Какие проблемы остаются в коде?
 // - *Для чего тут нужен CountDownLatch?
 // - *Зачем вызывать join() на потоках?
-public class FixMe1WithMonitorUnitTest {
-
+class FixMe1WithMonitorUnitTest {
+    private static final Logger log = LoggerFactory.getLogger(FixMe1WithMonitorUnitTest.class);
     private static final int ITERATIONS_COUNT = 1000;
 
     @Test
-    public void testMonitorWorksGreat() throws InterruptedException {
+    void testMonitorWorksGreat() throws InterruptedException {
 
         final List<String> list = new ArrayList<>();
         final CountDownLatch latch = new CountDownLatch(1);
-        List<Throwable> throwables = new ArrayList<>();
+        List<Exception> exceptions = new ArrayList<>();
 
         Thread t1 = new Thread(() -> {
             try {
@@ -44,8 +46,8 @@ public class FixMe1WithMonitorUnitTest {
                     list.add(randomAlphabetic(10) + "@gmail.com");
                     out.println("finishing adding email " + i);
                 }
-            } catch (Throwable throwable) {
-                throwables.add(throwable);
+            } catch (Exception ex) {
+                log.error(ex.getMessage(), ex);
             }
         });
         Thread t2 = new Thread(() -> {
@@ -56,8 +58,8 @@ public class FixMe1WithMonitorUnitTest {
                     list.forEach(out::println);
                     out.println("finishing read iteration " + i);
                 }
-            } catch (Throwable throwable) {
-                throwables.add(throwable);
+            } catch (Exception ex) {
+                exceptions.add(ex);
             }
         });
 
@@ -69,6 +71,6 @@ public class FixMe1WithMonitorUnitTest {
         t1.join();
         t2.join();
 
-        assertThat(throwables).withFailMessage(throwables.toString()).isEmpty();
+        assertThat(exceptions).withFailMessage(exceptions.toString()).isEmpty();
     }
 }

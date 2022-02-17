@@ -6,14 +6,13 @@ import ru.otus.api.SensorDataProcessor;
 import ru.otus.api.model.SensorData;
 
 public class SensorDataProcessorCommon implements SensorDataProcessor {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SensorDataProcessorCommon.class);
+    private static final Logger log = LoggerFactory.getLogger(SensorDataProcessorCommon.class);
 
     @Override
     public void process(SensorData data) {
-        if (data == null || data.getValue() == null || data.getValue().isNaN()) {
+        if (data.getValue() == null || data.getValue().isNaN()) {
             return;
         }
-        LOG.info("Обработка данных: {}", data);
+        log.info("Обработка данных: {}", data);
     }
 }
