@@ -35,11 +35,12 @@ class FixMe1WithMonitorUnitTest {
     void testMonitorWorksGreat() throws InterruptedException {
 
         final List<String> list = new ArrayList<>();
-        final CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(2);
         List<Exception> exceptions = new ArrayList<>();
 
         Thread t1 = new Thread(() -> {
             try {
+                latch.countDown();
                 latch.await();
                 for (int i = 0; i < ITERATIONS_COUNT; i++) {
                     out.println("starting adding email " + i);
@@ -52,6 +53,7 @@ class FixMe1WithMonitorUnitTest {
         });
         Thread t2 = new Thread(() -> {
             try {
+                latch.countDown();
                 latch.await();
                 for (int i = 0; i < ITERATIONS_COUNT; i++) {
                     out.println("starting read iteration " + i);
@@ -66,11 +68,8 @@ class FixMe1WithMonitorUnitTest {
         t1.start();
         t2.start();
 
-        latch.countDown();
-
         t1.join();
         t2.join();
-
         assertThat(exceptions).withFailMessage(exceptions.toString()).isEmpty();
     }
 }

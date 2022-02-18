@@ -23,11 +23,12 @@ class FixMe5WithBlockingQueueTest {
     void testBlockingQueueWorksGreat() throws InterruptedException {
 
         List<Integer> list = new ArrayList<>();
-        final CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(2);
         List<Exception> exceptions = new CopyOnWriteArrayList<>();
 
         Thread t1 = new Thread(() -> {
             try {
+                latch.countDown();
                 latch.await();
                 for (int i = 0; i < ITERATIONS_COUNT; i++) {
                     list.remove(0);
@@ -39,6 +40,7 @@ class FixMe5WithBlockingQueueTest {
 
         Thread t2 = new Thread(() -> {
             try {
+                latch.countDown();
                 latch.await();
                 for (int i = 0; i < ITERATIONS_COUNT; i++) {
                     list.add(list.size(), 5);
@@ -51,11 +53,8 @@ class FixMe5WithBlockingQueueTest {
         t1.start();
         t2.start();
 
-        latch.countDown();
-
         t1.join();
         t2.join();
-
         assertThat(exceptions).withFailMessage(exceptions.toString()).isEmpty();
     }
 }

@@ -27,11 +27,12 @@ class FixMe3WithCopyOnWriteArrayListUnitTest {
     void testCopyOnWriteArrayListWorksGreat() throws InterruptedException {
 
         final List<String> list = new ArrayList<>();
-        final CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(2);
         List<Exception> exceptions = new ArrayList<>();
 
         Thread t1 = new Thread(() -> {
             try {
+                latch.countDown();
                 latch.await();
                 for (int i = 0; i < ITERATIONS_COUNT; i++) {
                     out.println("starting adding email " + i);
@@ -44,6 +45,7 @@ class FixMe3WithCopyOnWriteArrayListUnitTest {
         });
         Thread t2 = new Thread(() -> {
             try {
+                latch.countDown();
                 latch.await();
                 for (int i = 0; i < ITERATIONS_COUNT; i++) {
                     out.println("starting read iteration " + i);
@@ -59,8 +61,6 @@ class FixMe3WithCopyOnWriteArrayListUnitTest {
 
         t1.start();
         t2.start();
-
-        latch.countDown();
 
         t1.join();
         t2.join();
