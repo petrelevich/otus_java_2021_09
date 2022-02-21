@@ -28,4 +28,8 @@ public interface Versions {
     String springDocOpenapiUi = "1.6.5";
 
     String jsr305 = "3.0.2";
+
+    String grpc = "1.44.1";
+    String errorProneAnnotations = "2.11.0";
+    String tomcatAnnotationsApi = "6.0.53";
 }
