@@ -37,7 +37,7 @@ class GreetingControllerTest {
         String expectedResult = "{\"Mr.Test\":\"Hello, Mr.Test\"}";
 
         when(greetingService.sayHello(name)).thenReturn(map);
-        MockHttpServletResponse result = mockMvc.perform(get(String.format("/hello?name=%s", name)))
+        MockHttpServletResponse result = mockMvc.perform(get(String.format("/api/v1/hello?name=%s", name)))
                 .andReturn()
                 .getResponse();
 
@@ -54,7 +54,7 @@ class GreetingControllerTest {
         String expectedResult = "{\"Mr.Test\":\"Hello, Mr.Test\"}";
 
         when(greetingService.sayHello(name)).thenReturn(map);
-        MockHttpServletResponse result = mockMvc.perform(get(String.format("/hello/%s", name)))
+        MockHttpServletResponse result = mockMvc.perform(get(String.format("/api/v1/hello/%s", name)))
                 .andReturn()
                 .getResponse();
 
