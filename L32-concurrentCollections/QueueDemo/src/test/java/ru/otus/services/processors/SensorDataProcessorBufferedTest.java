@@ -133,7 +133,7 @@ class SensorDataProcessorBufferedTest {
 
     private void awaitLatch(CountDownLatch latch) {
         try {
-            var result = latch.await(1, TimeUnit.SECONDS);
+            var result = latch.await(10, TimeUnit.SECONDS);
             if (result) {
                 log.warn("timeout");
             }
